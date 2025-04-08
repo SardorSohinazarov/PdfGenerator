@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PdfGenerator.API.Services;
 using SelectPdf;
 
 namespace PdfGenerator.API.Controllers
@@ -8,10 +9,14 @@ namespace PdfGenerator.API.Controllers
     public class PDFController : ControllerBase
     {
         private readonly IPDFService _pdfService;
+        private readonly PuppeteerPdfGenerator _puppeteerPdfGenerator;
 
-        public PDFController(IPDFService pdfService)
+        public PDFController(
+            IPDFService pdfService,
+            PuppeteerPdfGenerator puppeteerPdfGenerator)
         {
             _pdfService = pdfService;
+            _puppeteerPdfGenerator = puppeteerPdfGenerator;
         }
 
         [HttpPost]
@@ -24,6 +29,15 @@ namespace PdfGenerator.API.Controllers
 
             // PDF ni qaytarish
             return Ok("PDF muvaffaqiyatli yaratildi");
+        }
+
+        [HttpPost("puppeteer")]
+        public async Task<IActionResult> GeneratePDFPuppeteer(string html)
+        {
+            (string result, string error) = await _puppeteerPdfGenerator.GeneratePdfBase64Async(html);
+            if (string.IsNullOrEmpty(result)) return new ObjectResult(error);
+            HttpContext.Response.Headers.Add("Content-Disposition", $"attachment; filename=Data.pdf; filename*=UTF-8''Data.pdf");
+            return File(Convert.FromBase64String(result), "application/pdf");
         }
     }
 
