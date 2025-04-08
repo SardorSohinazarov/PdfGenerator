@@ -8,14 +8,11 @@ namespace PdfGenerator.API.Controllers
     [ApiController]
     public class PDFController : ControllerBase
     {
-        private readonly IPDFService _pdfService;
         private readonly PuppeteerPdfGenerator _puppeteerPdfGenerator;
 
         public PDFController(
-            IPDFService pdfService,
             PuppeteerPdfGenerator puppeteerPdfGenerator)
         {
-            _pdfService = pdfService;
             _puppeteerPdfGenerator = puppeteerPdfGenerator;
         }
 
@@ -38,19 +35,6 @@ namespace PdfGenerator.API.Controllers
             if (string.IsNullOrEmpty(result)) return new ObjectResult(error);
             HttpContext.Response.Headers.Add("Content-Disposition", $"attachment; filename=Data.pdf; filename*=UTF-8''Data.pdf");
             return File(Convert.FromBase64String(result), "application/pdf");
-        }
-    }
-
-    public interface IPDFService
-    {
-        Task<byte[]> GeneratePDF(string html);
-    }
-
-    public class PDFService : IPDFService
-    {
-        public async Task<byte[]> GeneratePDF(string html)
-        {
-            return null;
         }
     }
 }
