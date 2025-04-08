@@ -1,4 +1,5 @@
 using PdfGenerator.API.Controllers;
+using PdfGenerator.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +10,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IPDFService, PDFService>();
+builder.Services.AddScoped<PuppeteerPdfGenerator>();
 
 var app = builder.Build();
 
